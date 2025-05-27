@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Internship Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <link href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      display: flex; flex-direction: column;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+    }
+    header {
+      background: #f4b400;
+      color: white;
+      padding: 1rem 2rem;
+    }
+    header a {
+      color: white; text-decoration: none; margin-right: 1rem;
+      font-weight: 600;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      padding: 2rem;
+      gap: 2rem;
+    }
+    .sidebar {
+      width: 250px;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      height: fit-content;
+    }
+    .sidebar label {
+      display: block;
+      margin: 1rem 0 0.3rem 0;
+      font-weight: 700;
+    }
+    .sidebar input[type="text"],
+    .sidebar select,
+    .sidebar input[type="number"] {
+      width: 90%;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #price-slider {
+      margin: 15px 0;
+    }
+    .price-range-inputs {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .price-range-inputs input {
+      width: 48%;
+    }
+    .listings {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      overflow-y: auto;
+    }
+    .listing-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .listing-card img {
+      max-width: 100%;
+      border-radius: 6px;
+      object-fit: cover;
+      height: 120px;
+    }
+    .listing-card form {
+      margin-top: auto;
+    }
+    .listing-card button {
+      background: #f4b400;
+      color: #222;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      width: 100%;
+    }
+    .listing-card button:hover {
+      background: #e3a800;
+    }
+    footer {
+      background: #f4b400;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    footer button {
+      background: #555;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    footer button:hover {
+      background: #777;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 2rem;">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:40px;" />
+      <nav>
+        <a href="/">Home</a>
+        <a href="/listings">Listings</a>
+        <a href="/notifications">Notifications</a>
+      </nav>
+    </div>
+    <div>
+      {% if username %}
+      <a href="{{ url_for('profile') }}">
+		{% if profile_picture_url %}
+			<img src="{{ profile_picture_url }}" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% else %}
+			<img src="../Default_pfp.jpg" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% endif %}
+      </a>
+      {% else %}
+        <a href="/login" style="color:white; font-weight:600;">Login</a> / 
+        <a href="/register" style="color:white; font-weight:600;">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <aside class="sidebar">
+    <form method="get" action="/listings">
+      <!-- Search Bar -->
+      <label for="search">Search</label>
+	  <input type="text" id="search" name="search" value="{{ request.args.get('search', '') }}" placeholder="Search internships..." />
+
+      <!-- Category Dropdown -->
+      <label for="category">Category</label>
+      <select id="category" name="category">
+        <option value="">All</option>
+        {% set all_types = [] %}
+        {% for company in companies %}
+          {% for t in company.fields['Type of work'] %}
+            {% if t not in all_types %}
+              {% set _ = all_types.append(t) %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        {% for type in all_types %}
+          <option value="{{ type }}" {% if request.args.get('category') == type %}selected{% endif %}>{{ type }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Salary Range</label>
+      <div id="price-slider"></div>
+      <div class="price-range-inputs">
+        <input type="number" id="min_price" name="min_price" min="100" max="10000" value="{{ request.args.get('min_price', 100) }}" />
+        <input type="number" id="max_price" name="max_price" min="100" max="10000" value="{{ request.args.get('max_price', 10000) }}" />
+      </div>
+
+      <button type="submit" style="margin-top:1rem; width: 100%; background:#222; color:white; border:none; padding:0.7rem; font-weight:700; border-radius:4px; cursor:pointer;">
+        Filter
+      </button>
+    </form>
+  </aside>
+
+  <section class="listings">
+    {% if companies|length == 0 %}
+      <p>No internships available right now.</p>
+    {% else %}
+      {% for company in companies %}
+      <div class="listing-card">
+        {% if company.fields.Image %}
+          <img src="{{ company.fields.Image[0].url }}" alt="Image of {{ company.fields.Name }}" />
+        {% endif %}
+        <h3>{{ company.fields.Name }}</h3>
+        <p><strong>Location:</strong> {{ company.fields.location }}</p>
+        <p><strong>Salary:</strong> {{ company.fields['Base salary'] }}</p>
+        <p><strong>Work Type:</strong> {{ company.fields['Type of work'] | join(', ') }}</p>
+        <p><strong>Status:</strong> {{ company.fields.status }}</p>
+
+        <form action="{{ url_for('job_page', job_id=company.id) }}" method="get">
+          <button type="submit">View Job</button>
+        </form>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </section>
+
+</main>
+
+<footer>
+  <button>Facebook</button>
+  <button>Twitter</button>
+  <button>FAQ</button>
+  <button>More Info</button>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
+<script>
+  const slider = document.getElementById('price-slider');
+
+  noUiSlider.create(slider, {
+    start: [
+      {{ request.args.get('min_price', 100) }},
+      {{ request.args.get('max_price', 10000) }}
+    ],
+    connect: true,
+    step: 10,
+    range: {
+      'min': 100,
+      'max': 10000
+    },
+    format: {
+      to: value => Math.round(value),
+      from: value => Number(value)
+    }
+  });
+
+  const minPriceInput = document.getElementById('min_price');
+  const maxPriceInput = document.getElementById('max_price');
+
+  slider.noUiSlider.on('update', function(values) {
+    minPriceInput.value = values[0];
+    maxPriceInput.value = values[1];
+  });
+
+  minPriceInput.addEventListener('change', function() {
+    slider.noUiSlider.set([this.value, null]);
+  });
+  maxPriceInput.addEventListener('change', function() {
+    slider.noUiSlider.set([null, this.value]);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile - Internship Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+
+<header>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 2rem;">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:40px;" />
+      <nav>
+        <a href="/">Home</a>
+        <a href="/listings">Listings</a>
+        <a href="/notifications">Notifications</a>
+      </nav>
+    </div>
+    <div>
+      {% if username %}
+      <a href="{{ url_for('profile') }}">
+		{% if profile_picture_url %}
+			<img src="{{ profile_picture_url }}" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% else %}
+			<img src="../Default_pfp.jpg" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% endif %}
+      </a>
+      {% else %}
+        <a href="/login" style="color:white; font-weight:600;">Login</a> / 
+        <a href="/register" style="color:white; font-weight:600;">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main class="container" style="padding: 2rem; max-width: 700px; margin: auto;">
+
+  <h1>{{ username }}'s Profile</h1>
+
+  <form action="{{ url_for('update_profile') }}" method="POST" enctype="multipart/form-data">
+
+    <!-- Profile Picture -->
+    <section style="margin-bottom: 2rem;">
+      <h3>Profile Picture</h3>
+      <img src="{{ profile_picture_url or url_for('static', filename='default_profile.png') }}" alt="Profile Pic" 
+           style="width:150px; height:150px; object-fit:cover; border-radius: 50%; border:1px solid #ccc;" />
+      <br/>
+      <input type="file" name="profile_picture" accept="image/*" />
+    </section>
+
+    <!-- Phone Number -->
+    <section style="margin-bottom: 2rem;">
+      <h3>Phone Number</h3>
+      {% if phone %}
+        <p>Phone: {{ phone }} <button type="button" onclick="document.getElementById('phoneInput').style.display='inline-block'; this.style.display='none';">Change</button></p>
+        <input id="phoneInput" type="text" name="phone" value="{{ phone }}" style="display:none;" />
+      {% else %}
+        <input type="text" name="phone" placeholder="Add your phone number" />
+      {% endif %}
+    </section>
+
+    <!-- CV Upload -->
+    <section style="margin-bottom: 2rem;">
+      <h3>CV</h3>
+      {% if cv_url %}
+        <p>Current CV: <a href="{{ cv_url }}" target="_blank">View PDF</a></p>
+        <p>Upload new CV (PDF only):</p>
+      {% else %}
+        <p>No CV uploaded yet.</p>
+        <p>Upload your CV (PDF only):</p>
+      {% endif %}
+      <input type="file" name="cv" accept="application/pdf" />
+    </section>
+
+    <!-- Description -->
+    <section style="margin-bottom: 2rem;">
+      <h3>About Me</h3>
+      <textarea name="description" rows="5" style="width:100%;" placeholder="Write a short description about yourself...">{{ description or '' }}</textarea>
+    </section>
+
+    <!-- Education (assuming single select dropdown) -->
+    <section style="margin-bottom: 2rem;">
+      <h3>Education</h3>
+      <select name="education" style="width:100%; padding:0.5rem;">
+        <option value="" {% if not education %}selected{% endif %}>-- Select your education --</option>
+        <option value="High School" {% if education == "High School" %}selected{% endif %}>High School</option>
+        <option value="Bachelor's" {% if education == "Bachelor's" %}selected{% endif %}>Bachelor's</option>
+        <option value="Master's" {% if education == "Master's" %}selected{% endif %}>Master's</option>
+        <option value="PhD" {% if education == "PhD" %}selected{% endif %}>PhD</option>
+        <option value="Other" {% if education == "Other" %}selected{% endif %}>Other</option>
+      </select>
+    </section>
+
+    <button type="submit" style="padding:0.75rem 1.5rem; font-weight:bold;">Save Changes</button>
+
+  </form>
+
+</main>
+
+<footer style="display:flex; justify-content:center; gap:1rem; padding:1rem; background:#222; color:white;">
+  <button>Facebook</button>
+  <button>Twitter</button>
+  <button>FAQ</button>
+  <button>More Info</button>
+</footer>
+
+</body>
+</html>

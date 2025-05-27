@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register - Internship Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+<header>
+    <div class="header-content" style="display:flex; align-items:center; justify-content:space-between; padding: 0 1rem;">
+        <div><img src="/static/logo.png" alt="Logo" style="height:40px;" /></div>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a> |
+            <a href="{{ url_for('index') }}">Listings</a> |
+            <a href="#">Notifications</a>
+        </nav>
+        <div style="width:40px;"></div>
+    </div>
+</header>
+
+<div class="container" style="max-width:400px; margin: 2rem auto;">
+    <h2>Register</h2>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: red;">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('register') }}">
+        <label for="name">Full Name</label><br />
+        <input type="text" name="name" required><br><br>
+
+        <label for="email">Email</label><br />
+        <input type="email" name="email" required><br><br>
+
+        <label for="phone">Phone Number</label><br />
+        <input type="tel" name="phone" required><br><br>
+
+        <label for="password">Password</label><br />
+        <input type="password" name="password" required><br><br>
+
+        <label for="confirm">Confirm Password</label><br />
+        <input type="password" name="confirm" required><br><br>
+
+        <button type="submit">Register</button>
+    </form>
+    <p style="margin-top:1rem;">
+        Already have an account? <a href="{{ url_for('login') }}">Login here</a>.
+    </p>
+</div>
+
+<footer>
+    <p>Internship Portal &copy; 2025</p>
+</footer>
+</body>
+</html>

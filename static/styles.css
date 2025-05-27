@@ -1,0 +1,139 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f9f9f9;
+    color: #333;
+}
+
+body > main {
+    flex: 1;
+}
+
+header, footer {
+    background: #f4b400;
+    color: white;
+    padding: 1em;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.container {
+    padding: 2em;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 1em;
+    margin: 1em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+button {
+    background-color: #f4b400;
+    border: none;
+    padding: 0.5em 1em;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #e09e00;
+}
+
+.notification-drawer {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    display: none;
+    padding: 1em;
+}
+
+.show {
+    display: block !important;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #f4b400;
+    border-radius: 4px;
+}
+
+.company-card {
+    min-width: 300px;
+    background: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.company-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+}
+
+nav a {
+    margin: 0 1rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.company-image {
+    width: 100%;       /* full width of container */
+    aspect-ratio: 4 / 3;
+    object-fit: cover; /* crops image nicely without distortion */
+    border-radius: 8px;
+    display: block;
+  }
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* center the row nicely */
+}
+  
+.card {
+    flex: 0 1 calc(33.33% - 20px); /* roughly 3 per row with gap */
+    max-width: 320px; /* optional max width to keep card sane */
+    box-sizing: border-box;
+}
+

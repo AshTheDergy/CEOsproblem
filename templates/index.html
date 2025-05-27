@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Internship Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+
+<header>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 2rem;">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:40px;" />
+      <nav>
+        <a href="/">Home</a>
+        <a href="/listings">Listings</a>
+        <a href="/notifications">Notifications</a>
+      </nav>
+    </div>
+    <div>
+      {% if username %}
+      <a href="{{ url_for('profile') }}">
+		{% if profile_picture_url %}
+			<img src="{{ profile_picture_url }}" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% else %}
+			<img src="../Default_pfp.jpg" alt="Profile" class="profile-pic" title="{{ username }}" />
+		{% endif %}
+      </a>
+      {% else %}
+        <a href="/login" style="color:white; font-weight:600;">Login</a> / 
+        <a href="/register" style="color:white; font-weight:600;">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main class="container" style="padding-top:2rem; flex:1;">
+
+  {% if not username %}
+  <section>
+    <h2>Welcome to the Internship Portal! Our design team and project team haven't really made a landing page yet sorry! (Placeholder info)</h2>
+    <p>Our mission is simple: connect talented students with the perfect internship opportunities in innovative companies across Estonia and beyond.</p>
+    <p>Whether you’re looking to gain real-world experience, boost your resume, or explore your future career path, we’ve got you covered.</p>
+    <ul>
+      <li><strong>For Students:</strong> Discover internships that match your skills and ambitions.</li>
+      <li><strong>For Companies:</strong> Find passionate interns eager to contribute and learn.</li>
+      <li><strong>Easy Applications:</strong> Apply directly through our platform with just a few clicks.</li>
+      <li><strong>Personalized Recommendations:</strong> Get suggested internships based on your profile.</li>
+    </ul>
+    <p>Ready to jumpstart your career? <a href="/register">Register</a> or <a href="/login">Login</a> now!</p>
+<br>
+	<h1><strong>CSS IS TEMPORARY. </strong></h1><p>Design team help us...</p>
+  </section>
+  {% else %}
+  <section style="display:flex; gap: 2rem;">
+    <div style="flex:1;">
+      <h3>Current Applications</h3>
+      {% if current_applications %}
+        <ul>
+          {% for app in current_applications %}
+            <li>{{ app.company_name }} - {{ app.position }} (Status: {{ app.status }})</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Project team slop. idfk. Design team help us!</p>
+      {% endif %}
+      <a href="/listings"><button>All Job Listings</button></a>
+    </div>
+  </section>
+
+  <section style="margin-top:3rem;">
+    <h2>Recommended Internships:</h2>
+    <div style="display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem;">
+      {% for company in recommendations %}
+      <div style="flex:0 0 18%; border:1px solid #ccc; border-radius:8px; padding:1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background:#fff;">
+        {% if company.fields.Image %}
+            <img 
+                src="{{ company.fields.Image[0].url }}" 
+                alt="Image of {{ company.fields.Name }}" 
+                class="company-image"
+            />
+        {% endif %}
+        <h3 style="margin-top:0;">{{ company.fields.Name }}</h3>
+        <p><strong>Salary:</strong> {{ company.fields['Base salary'] }}</p>
+        <p><strong>Work Type:</strong> {{ company.fields['Type of work'] | join(', ') }}</p>
+        <p><strong>Status:</strong> {{ company.fields['Status'] }}</p>
+	<form action="{{ url_for('job_page', job_id=company.id) }}" method="get">
+          <button type="submit">View Job</button>
+        </form>
+
+      </div>
+      {% else %}
+      <p>No internships available right now.</p>
+      {% endfor %}
+    </div>
+  </section>
+  
+  
+
+  <section style="margin-top:3rem;">
+    <h2>Places Near You</h2>
+    <img src="{{ url_for('static', filename='maps_placeholder.png') }}" alt="Google Maps Placeholder" style="width:100%; max-width:600px; border-radius:10px;"/>
+  </section>
+  {% endif %}
+
+</main>
+
+<footer>
+  <button>Facebook</button>
+  <button>Twitter</button>
+  <button>FAQ</button>
+  <button>More Info</button>
+</footer>
+
+</body>
+</html>

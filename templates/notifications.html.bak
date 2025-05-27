@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notifications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+
+<header>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 2rem;">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:40px;" />
+      <nav>
+        <a href="/">Home</a>
+        <a href="/listings">Listings</a>
+        <a href="/notifications">Notifications</a>
+      </nav>
+    </div>
+    <div>
+      {% if username %}
+      <a href="{{ url_for('profile') }}">
+        <img src="{{ profile_picture_url }}" alt="Profile" class="profile-pic" title="{{ username }}" />
+      </a>
+      {% else %}
+        <a href="/login" style="color:white; font-weight:600;">Login</a> / 
+        <a href="/register" style="color:white; font-weight:600;">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main class="container" style="padding-top:2rem; flex:1;">
+
+<h1>NONE</h1>
+<h3>Design team, noti page mockup when?</h3>
+
+</main>
+
+<footer>
+  <button>Facebook</button>
+  <button>Twitter</button>
+  <button>FAQ</button>
+  <button>More Info</button>
+</footer>
+
+</body>
+</html>

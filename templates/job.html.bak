@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ company.fields.Name }} | Job Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+
+
+<header>
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 2rem;">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="height:40px;" />
+      <nav>
+        <a href="/">Home</a>
+        <a href="/listings">Listings</a>
+        <a href="/notifications">Notifications</a>
+      </nav>
+    </div>
+    <div>
+      {% if username %}
+      <a href="{{ url_for('profile') }}">
+        <img src="{{ profile_picture_url }}" alt="Profile" class="profile-pic" title="{{ username }}" />
+      </a>
+      {% else %}
+        <a href="/login" style="color:white; font-weight:600;">Login</a> / 
+        <a href="/register" style="color:white; font-weight:600;">Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="card" style="max-width: 800px; margin: 2rem auto;">
+    {% if company.fields.Image %}
+      <img src="{{ company.fields.Image[0].url }}" alt="Image of {{ company.fields.Name }}" class="company-image" />
+    {% endif %}
+    <h2>{{ company.fields.Name }}</h2>
+    <p><strong>Location:</strong> {{ company.fields.location }}</p>
+    <p><strong>Salary:</strong> {{ company.fields['Base salary'] }}</p>
+    <p><strong>Work Type:</strong> {{ company.fields['Type of work'] | join(', ') }}</p>
+    <p><strong>Status:</strong> {{ company.fields.status }}</p>
+    
+    {% if company.fields.Description %}
+      <p><strong>Description:</strong></p>
+      <p>{{ company.fields.Description }}</p>
+    {% endif %}
+
+    <div style="margin-top: 1.5rem;">
+      <a href="/listings"><button>Back to Listings</button></a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <button>Facebook</button>
+  <button>Twitter</button>
+  <button>FAQ</button>
+  <button>More Info</button>
+</footer>
+
+</body>
+</html>
